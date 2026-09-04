@@ -26,7 +26,7 @@ class AIService:
             try:
                 import google.generativeai as genai
                 genai.configure(api_key=settings.GEMINI_API_KEY)
-                self._gemini_model = genai.GenerativeModel("gemini-1.5-flash")
+                self._gemini_model = genai.GenerativeModel("gemini-2.0-flash")
                 logger.info("AI Provider: Gemini initialized")
             except Exception as e:
                 logger.warning(f"Gemini init failed ({e}), falling back to mock")
