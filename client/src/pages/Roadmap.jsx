@@ -35,7 +35,7 @@ export default function Roadmap() {
       const { data } = await roadmapAPI.generate(form)
       setRoadmaps(prev => [data.roadmap, ...prev.filter(r => !r.is_active)])
       toast.success('Roadmap generated!')
-      navigate(`/roadmap/${data.roadmap.id}`)
+      navigate(`/roadmap/${data.roadmap_id || data.roadmap.id}`)
     } catch (err) {
       toast.error(err.response?.data?.detail || 'Generation failed')
     } finally { setGenerating(false) }

@@ -55,7 +55,7 @@ async def get_active_roadmap(current_user: User = Depends(get_current_user)):
     )
     if not roadmap:
         return {"success": True, "roadmap": None}
-    return {"success": True, "roadmap": roadmap.model_dump()}
+    return {"success": True, "roadmap": roadmap.model_dump(mode='json')}
 
 
 @router.get("/{roadmap_id}")
@@ -63,7 +63,7 @@ async def get_roadmap(roadmap_id: str, current_user: User = Depends(get_current_
     roadmap = await Roadmap.get(roadmap_id)
     if not roadmap or roadmap.user_id != current_user.id:
         raise HTTPException(status_code=404, detail="Roadmap not found")
-    return {"success": True, "roadmap": roadmap.model_dump()}
+    return {"success": True, "roadmap": roadmap.model_dump(mode='json')}
 
 
 @router.post("/generate")
@@ -123,7 +123,7 @@ async def generate_roadmap(body: GenerateRoadmapRequest, current_user: User = De
         progress.roadmap.completion_percentage = 0
         await progress.save()
 
-    return {"success": True, "roadmap": roadmap.model_dump(), "roadmap_id": str(roadmap.id)}
+    return {"success": True, "roadmap": roadmap.model_dump(mode='json'), "roadmap_id": str(roadmap.id)}
 
 
 @router.patch("/{roadmap_id}/tasks/{task_id}")
