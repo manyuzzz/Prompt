@@ -10,6 +10,7 @@ class AIService:
     def __init__(self):
         self.provider = settings.AI_PROVIDER
         self.client = None
+        self._gemini_model = None
         self._init_provider()
 
     def _init_provider(self):
@@ -21,9 +22,18 @@ class AIService:
             except Exception as e:
                 logger.warning(f"OpenAI init failed ({e}), falling back to mock")
                 self.provider = "mock"
+        elif self.provider == "gemini" and settings.GEMINI_API_KEY:
+            try:
+                import google.generativeai as genai
+                genai.configure(api_key=settings.GEMINI_API_KEY)
+                self._gemini_model = genai.GenerativeModel("gemini-1.5-flash")
+                logger.info("AI Provider: Gemini initialized")
+            except Exception as e:
+                logger.warning(f"Gemini init failed ({e}), falling back to mock")
+                self.provider = "mock"
         else:
             self.provider = "mock"
-            logger.info("AI Provider: Mock mode. Set AI_PROVIDER=openai and OPENAI_API_KEY for real AI.")
+            logger.info("AI Provider: Mock mode. Set AI_PROVIDER=gemini and GEMINI_API_KEY for real AI.")
 
     async def chat(
         self,
@@ -34,6 +44,8 @@ class AIService:
     ) -> str:
         if self.provider == "openai":
             return await self._openai_chat(messages, system_prompt, temperature, max_tokens)
+        if self.provider == "gemini":
+            return await self._gemini_chat(messages, system_prompt, temperature, max_tokens)
         return await self._mock_chat(messages, system_prompt)
 
     async def _openai_chat(self, messages, system_prompt, temperature, max_tokens) -> str:
@@ -48,6 +60,24 @@ class AIService:
             max_tokens=max_tokens,
         )
         return response.choices[0].message.content
+
+    async def _gemini_chat(self, messages, system_prompt, temperature, max_tokens) -> str:
+        import asyncio
+        parts = []
+        if system_prompt:
+            parts.append(system_prompt + "\n\n")
+        for m in messages:
+            parts.append(f"{m['role'].upper()}: {m['content']}\n")
+        prompt = "".join(parts)
+        loop = asyncio.get_event_loop()
+        response = await loop.run_in_executor(
+            None,
+            lambda: self._gemini_model.generate_content(
+                prompt,
+                generation_config={"temperature": temperature, "max_output_tokens": max_tokens},
+            )
+        )
+        return response.text
 
     async def _mock_chat(self, messages: List[Dict], system_prompt: Optional[str] = None) -> str:
         await asyncio.sleep(0.5)
