@@ -33,8 +33,8 @@ export default function ProblemDetail() {
     if (!code.trim()) return
     setRunning(true); setOutput(null)
     try {
-      const { data } = await codingAPI.run({ problem_id: problem.id, language: lang, code })
-      setOutput({ type: 'run', ...data })
+      const { data } = await codingAPI.run({ language: lang, code })
+      setOutput({ type: 'run', ...data.result })
     } catch { toast.error('Execution failed') }
     finally { setRunning(false) }
   }
@@ -43,10 +43,11 @@ export default function ProblemDetail() {
     if (!code.trim()) return
     setSubmitting(true); setOutput(null)
     try {
-      const { data } = await codingAPI.submit({ problem_id: problem.id, language: lang, code })
-      setOutput({ type: 'submit', ...data })
-      if (data.is_accepted) toast.success(`Accepted! +${data.xp_awarded} XP`)
-      else toast.error('Wrong Answer')
+      const { data } = await codingAPI.submit({ problem_slug: problem.slug, language: lang, code })
+      const result = data.result || {}
+      setOutput({ type: 'submit', ...result, xp_earned: data.xp_earned })
+      if (result.status === 'accepted') toast.success(`Accepted! +${data.xp_earned} XP`)
+      else toast.error(result.status?.replace(/_/g, ' ') || 'Wrong Answer')
     } catch { toast.error('Submission failed') }
     finally { setSubmitting(false) }
   }
@@ -161,21 +162,21 @@ export default function ProblemDetail() {
           {output && (
             <div className="border-t border-gray-800 p-4 max-h-48 overflow-y-auto bg-gray-900 shrink-0">
               <div className="flex items-center gap-2 mb-2">
-                {output.is_accepted || output.status === 'success'
+                {output.status === 'accepted' || output.status === 'success'
                   ? <CheckCircle size={16} className="text-green-400" />
                   : <XCircle size={16} className="text-red-400" />}
-                <span className={`text-sm font-medium ${output.is_accepted || output.status === 'success' ? 'text-green-400' : 'text-red-400'}`}>
+                <span className={`text-sm font-medium ${output.status === 'accepted' || output.status === 'success' ? 'text-green-400' : 'text-red-400'}`}>
                   {output.type === 'submit'
-                    ? (output.is_accepted ? 'Accepted' : `${output.status?.replace(/_/g, ' ')}`)
+                    ? (output.status === 'accepted' ? 'Accepted' : `${output.status?.replace(/_/g, ' ')}`)
                     : (output.status === 'success' ? 'Run Successful' : 'Error')}
                 </span>
                 {output.execution_time_ms && (
                   <span className="text-xs text-gray-500 ml-auto">{output.execution_time_ms}ms</span>
                 )}
               </div>
-              {output.stdout && <pre className="text-xs font-mono text-gray-300 whitespace-pre-wrap">{output.stdout}</pre>}
+              {(output.output || output.stdout) && <pre className="text-xs font-mono text-gray-300 whitespace-pre-wrap">{output.output || output.stdout}</pre>}
               {output.stderr && <pre className="text-xs font-mono text-red-400 whitespace-pre-wrap">{output.stderr}</pre>}
-              {output.error && <pre className="text-xs font-mono text-red-400 whitespace-pre-wrap">{output.error}</pre>}
+              {(output.error || output.error_message) && <pre className="text-xs font-mono text-red-400 whitespace-pre-wrap">{output.error || output.error_message}</pre>}
               {output.test_results?.length > 0 && (
                 <div className="mt-2 space-y-1">
                   {output.test_results.slice(0, 3).map((t, i) => (
