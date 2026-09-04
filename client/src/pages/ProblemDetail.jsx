@@ -98,7 +98,7 @@ export default function ProblemDetail() {
             <div>
               <h4 className="text-sm font-medium text-gray-400 mb-2">Constraints</h4>
               <ul className="space-y-1">
-                {problem.constraints.map((c, i) => (
+                {(Array.isArray(problem.constraints) ? problem.constraints : [problem.constraints]).map((c, i) => (
                   <li key={i} className="text-xs font-mono text-gray-400">• {c}</li>
                 ))}
               </ul>
