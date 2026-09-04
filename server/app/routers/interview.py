@@ -207,4 +207,4 @@ async def get_interview(interview_id: str, current_user: User = Depends(get_curr
     interview = await Interview.get(interview_id)
     if not interview or interview.user_id != current_user.id:
         raise HTTPException(status_code=404, detail="Interview not found")
-    return {"success": True, "interview": interview.model_dump()}
+    return {"success": True, "interview": interview.model_dump(mode='json')}

@@ -22,7 +22,7 @@ export default function InterviewSession() {
     interviewAPI.getOne(id).then(r => {
       const inv = r.data.interview
       setInterview(inv)
-      if (inv.status === 'in_progress' && inv.questions?.length) {
+      if ((inv.status === 'ongoing' || inv.status === 'in_progress') && inv.questions?.length) {
         setCurrentQ(inv.questions[0])
       } else if (inv.status === 'completed') {
         navigate(`/interview/result/${id}`, { replace: true })
