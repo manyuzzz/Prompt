@@ -53,7 +53,7 @@ export default function Chat() {
 
     try {
       const { data } = await chatAPI.send({ message: text, conversation_id: activeId })
-      setMessages(prev => [...prev, { role: 'assistant', content: data.response, timestamp: new Date().toISOString() }])
+      setMessages(prev => [...prev, { role: 'assistant', content: data.reply, timestamp: new Date().toISOString() }])
       if (!activeId && data.conversation_id) {
         setActiveId(data.conversation_id)
         loadConversations()
