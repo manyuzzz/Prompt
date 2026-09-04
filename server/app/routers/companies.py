@@ -39,4 +39,4 @@ async def get_company(slug: str, current_user: User = Depends(get_current_user))
     company = await Company.find_one(Company.slug == slug)
     if not company:
         raise HTTPException(status_code=404, detail="Company not found")
-    return {"success": True, "company": company.model_dump()}
+    return {"success": True, "company": company.model_dump(mode='json')}

@@ -33,8 +33,9 @@ export default function RoadmapDetail() {
     setCompleting(taskId)
     try {
       const { data } = await roadmapAPI.completeTask(id, taskId)
-      setRoadmap(data.roadmap)
-      toast.success(`+${data.xp_awarded} XP earned!`)
+      const { data: refreshed } = await roadmapAPI.getOne(id)
+      setRoadmap(refreshed.roadmap)
+      if (data.xp_earned) toast.success(`+${data.xp_earned} XP earned!`)
     } catch { toast.error('Failed to mark complete') }
     finally { setCompleting(null) }
   }
