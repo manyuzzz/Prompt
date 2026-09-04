@@ -4,15 +4,11 @@ from typing import Optional
 
 async def extract_text_from_pdf(file_bytes: bytes) -> str:
     try:
-        import fitz  # PyMuPDF
-        doc = fitz.open(stream=file_bytes, filetype="pdf")
-        text = ""
-        for page in doc:
-            text += page.get_text()
-        doc.close()
-        return text.strip()
+        from pdfminer.high_level import extract_text
+        text = extract_text(io.BytesIO(file_bytes))
+        return text.strip() if text else ""
     except ImportError:
-        return _fallback_pdf_extraction(file_bytes)
+        return "PDF text extraction requires pdfminer.six. Install with: pip install pdfminer.six"
     except Exception as e:
         return f"Error extracting PDF text: {str(e)}"
 
@@ -30,15 +26,6 @@ async def extract_text_from_docx(file_bytes: bytes) -> str:
         return "\n".join(paragraphs)
     except Exception as e:
         return f"Error extracting DOCX text: {str(e)}"
-
-
-def _fallback_pdf_extraction(file_bytes: bytes) -> str:
-    try:
-        import pdf2image
-        from PIL import Image
-        return "PDF text extraction requires PyMuPDF. Install with: pip install PyMuPDF"
-    except Exception:
-        return "Unable to extract text from PDF. Please ensure PyMuPDF is installed."
 
 
 def validate_resume_file(filename: str, file_size: int, max_size: int = 10 * 1024 * 1024) -> Optional[str]:
