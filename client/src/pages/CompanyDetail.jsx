@@ -49,7 +49,7 @@ export default function CompanyDetail() {
             <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
               {company.headquarters && <span className="flex items-center gap-1"><MapPin size={12} />{company.headquarters}</span>}
               {company.size && <span className="flex items-center gap-1"><Users size={12} />{company.size}</span>}
-              {company.salary_range && <span className="flex items-center gap-1"><DollarSign size={12} />{company.salary_range}</span>}
+              {company.salary_range && <span className="flex items-center gap-1"><DollarSign size={12} />{typeof company.salary_range === 'string' ? company.salary_range : `${company.salary_range.min || ''} – ${company.salary_range.max || ''}`}</span>}
             </div>
           </div>
         </div>
