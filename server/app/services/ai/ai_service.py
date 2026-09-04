@@ -409,6 +409,50 @@ Browser → OS Cache → Local DNS → Root DNS
 4. Three-way handshake (TCP connection setup)
 5. ARP, DHCP, NAT explained"""
 
+    def _mock_interview_advice(self) -> str:
+        return """## Interview Preparation Guide
+
+### HR Interview Tips
+
+**Tell me about yourself — Formula:**
+1. Current status (year, branch, college)
+2. Technical skills & projects
+3. Achievements
+4. Why this company
+
+**Common HR Questions & How to Answer:**
+- **Why do you want to join us?** — Research the company, mention specific products/culture
+- **Strength/Weakness?** — Be honest; show self-awareness and improvement on weakness
+- **Where in 5 years?** — Show ambition aligned with the company's growth
+- **Why should we hire you?** — Tie your skills directly to the job requirements
+
+### STAR Method for Behavioral Questions
+- **S**ituation — Set the context briefly
+- **T**ask — What was your responsibility
+- **A**ction — Steps you specifically took
+- **R**esult — Quantifiable outcome
+
+**Example:** *"Tell me about a time you worked under pressure"*
+> S: Final semester, 3 project deadlines in one week
+> T: I was team lead responsible for delivery
+> A: Broke tasks into daily goals, held daily standups, used Trello
+> R: All 3 delivered on time, team scored 95/100
+
+### Technical Interview Tips
+- Think aloud — explain your approach before coding
+- Start brute force → optimize step by step
+- Ask clarifying questions before diving in
+- Test with edge cases (empty input, single element, large n)
+- Know your time/space complexity
+
+### Common Mistakes to Avoid
+- ❌ Going silent when stuck — always talk through your thinking
+- ❌ Jumping to code without understanding the problem
+- ❌ Not knowing your own resume projects deeply
+- ❌ Negative talk about previous experiences
+
+**Practice with the Mock Interview section — it gives real-time feedback on your answers!**"""
+
     def _mock_general_response(self) -> str:
         return """## AI Placement Assistant — Ready to Help!
 
