@@ -90,13 +90,35 @@ export default function CompanyDetail() {
 
       {company.aptitude_pattern && (
         <Section title="Aptitude Test Pattern">
-          <div className="grid grid-cols-2 gap-3 text-sm">
-            {Object.entries(company.aptitude_pattern).map(([k, v]) => (
-              <div key={k} className="flex justify-between">
-                <span className="text-gray-400 capitalize">{k.replace(/_/g, ' ')}</span>
-                <span className="text-white font-medium">{String(v)}</span>
-              </div>
-            ))}
+          <div className="space-y-3 text-sm">
+            {Object.entries(company.aptitude_pattern).map(([k, v]) => {
+              if (Array.isArray(v) && v.length > 0 && typeof v[0] === 'object') {
+                return (
+                  <div key={k}>
+                    <p className="text-gray-400 capitalize mb-2">{k.replace(/_/g, ' ')}</p>
+                    <div className="space-y-2">
+                      {v.map((item, i) => (
+                        <div key={i} className="bg-gray-800/50 rounded-lg p-3">
+                          {item.name && <p className="font-medium text-white text-xs mb-1">{item.name}</p>}
+                          <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-400">
+                            {item.questions && <span>Questions: {item.questions}</span>}
+                            {item.time && <span>Time: {item.time}</span>}
+                            {item.topics?.length > 0 && <span>Topics: {item.topics.join(', ')}</span>}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )
+              }
+              const display = Array.isArray(v) ? v.join(', ') : String(v)
+              return (
+                <div key={k} className="flex justify-between">
+                  <span className="text-gray-400 capitalize">{k.replace(/_/g, ' ')}</span>
+                  <span className="text-white font-medium text-right max-w-[60%]">{display}</span>
+                </div>
+              )
+            })}
           </div>
         </Section>
       )}
@@ -113,13 +135,16 @@ export default function CompanyDetail() {
 
       {company.coding_pattern && (
         <Section title="Coding Round Pattern">
-          <div className="grid grid-cols-2 gap-3 text-sm">
-            {Object.entries(company.coding_pattern).map(([k, v]) => (
-              <div key={k} className="flex justify-between">
-                <span className="text-gray-400 capitalize">{k.replace(/_/g, ' ')}</span>
-                <span className="text-white font-medium">{String(v)}</span>
-              </div>
-            ))}
+          <div className="space-y-2 text-sm">
+            {Object.entries(company.coding_pattern).map(([k, v]) => {
+              const display = Array.isArray(v) ? v.join(', ') : String(v)
+              return (
+                <div key={k} className="flex justify-between">
+                  <span className="text-gray-400 capitalize">{k.replace(/_/g, ' ')}</span>
+                  <span className="text-white font-medium text-right max-w-[60%]">{display}</span>
+                </div>
+              )
+            })}
           </div>
         </Section>
       )}
