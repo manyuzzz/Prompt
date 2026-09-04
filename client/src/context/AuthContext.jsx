@@ -25,14 +25,16 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password) => {
     const { data } = await authAPI.login({ email, password })
-    localStorage.setItem('token', data.token)
+    const token = data.token || data.user?.token
+    localStorage.setItem('token', token)
     setUser(data.user)
     return data
   }
 
   const register = async (formData) => {
     const { data } = await authAPI.register(formData)
-    localStorage.setItem('token', data.token)
+    const token = data.token || data.user?.token
+    localStorage.setItem('token', token)
     setUser(data.user)
     return data
   }
