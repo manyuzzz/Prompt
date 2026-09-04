@@ -31,6 +31,7 @@ export const authAPI = {
   login: (data) => api.post('/api/auth/login', data),
   me: () => api.get('/api/auth/me'),
   updateProfile: (data) => api.put('/api/auth/profile', data),
+  resetProgress: () => api.post('/api/auth/reset'),
 }
 
 export const chatAPI = {

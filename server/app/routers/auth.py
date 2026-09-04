@@ -100,6 +100,55 @@ async def get_me(current_user: User = Depends(get_current_user)):
     return {"success": True, "user": user_response(current_user)}
 
 
+@router.post("/reset")
+async def reset_progress(current_user: User = Depends(get_current_user)):
+    from app.models.coding import Submission
+    from app.models.progress import (
+        CodingProgress, AptitudeProgress, InterviewProgress,
+        ResumeProgress, RoadmapProgress,
+    )
+    from beanie.odm.operators.find.comparison import In
+    import beanie
+
+    # Reset user XP, level, streak, badges
+    current_user.xp = 0
+    current_user.level = 1
+    current_user.streak = 0
+    current_user.badges = []
+    await current_user.save()
+
+    # Reset progress document
+    progress = await Progress.find_one(Progress.user_id == current_user.id)
+    if progress:
+        progress.coding = CodingProgress()
+        progress.aptitude = AptitudeProgress()
+        progress.interview = InterviewProgress()
+        progress.resume = ResumeProgress()
+        progress.roadmap = RoadmapProgress()
+        progress.placement_readiness_score = 0
+        progress.weekly_activity = []
+        await progress.save()
+
+    # Delete all submissions
+    await Submission.find(Submission.user_id == current_user.id).delete()
+
+    # Delete roadmaps
+    try:
+        from app.models.roadmap import Roadmap
+        await Roadmap.find(Roadmap.user_id == current_user.id).delete()
+    except Exception:
+        pass
+
+    # Delete interviews
+    try:
+        from app.models.interview import Interview
+        await Interview.find(Interview.user_id == current_user.id).delete()
+    except Exception:
+        pass
+
+    return {"success": True, "message": "Progress reset successfully"}
+
+
 @router.put("/profile")
 async def update_profile(body: UpdateProfileRequest, current_user: User = Depends(get_current_user)):
     update_data = {k: v for k, v in body.model_dump().items() if v is not None}
