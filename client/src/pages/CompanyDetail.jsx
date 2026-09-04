@@ -136,8 +136,13 @@ export default function CompanyDetail() {
 
       {company.roles?.length > 0 && (
         <Section title="Open Roles">
-          <div className="flex flex-wrap gap-2">
-            {company.roles.map(r => <span key={r} className="badge badge-green">{r}</span>)}
+          <div className="space-y-2">
+            {company.roles.map((r, i) => (
+              <div key={i} className="flex items-start gap-2">
+                <span className="badge badge-green shrink-0">{typeof r === 'string' ? r : r.title}</span>
+                {r.description && <span className="text-xs text-gray-400 mt-0.5">{r.description}</span>}
+              </div>
+            ))}
           </div>
         </Section>
       )}
