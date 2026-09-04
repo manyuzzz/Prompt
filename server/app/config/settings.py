@@ -1,7 +1,14 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Optional
+import os
 
 class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), ".env"),
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
+
     APP_NAME: str = "AI Placement Preparation Platform"
     VERSION: str = "1.0.0"
     DEBUG: bool = True
@@ -12,14 +19,14 @@ class Settings(BaseSettings):
 
     JWT_SECRET: str = "super-secret-jwt-key-change-in-production"
     JWT_ALGORITHM: str = "HS256"
-    JWT_EXPIRE_MINUTES: int = 10080  # 7 days
+    JWT_EXPIRE_MINUTES: int = 10080
 
     OPENAI_API_KEY: Optional[str] = None
     OPENAI_MODEL: str = "gpt-4o-mini"
     GEMINI_API_KEY: Optional[str] = None
-    AI_PROVIDER: str = "mock"  # 'openai', 'gemini', 'mock'
+    AI_PROVIDER: str = "mock"
 
-    MAX_FILE_SIZE: int = 10 * 1024 * 1024  # 10 MB
+    MAX_FILE_SIZE: int = 10 * 1024 * 1024
     UPLOAD_DIR: str = "uploads"
 
     CODE_RUNNER_URL: str = "http://localhost:6000"
@@ -27,9 +34,5 @@ class Settings(BaseSettings):
 
     RATE_LIMIT_WINDOW: int = 15
     RATE_LIMIT_MAX: int = 100
-
-    class Config:
-        env_file = ".env"
-        extra = "ignore"
 
 settings = Settings()
