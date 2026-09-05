@@ -25,7 +25,7 @@ async def get_problems(
     difficulty: Optional[str] = None,
     topic: Optional[str] = None,
     page: int = Query(1, ge=1),
-    limit: int = Query(20, ge=1, le=50),
+    limit: int = Query(50, ge=1, le=200),
     search: Optional[str] = None,
     current_user: User = Depends(get_current_user),
 ):

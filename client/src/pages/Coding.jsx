@@ -20,7 +20,7 @@ export default function Coding() {
 
   const loadProblems = async (f = filters) => {
     setLoading(true)
-    const params = {}
+    const params = { limit: 100 }
     if (f.difficulty !== 'all') params.difficulty = f.difficulty
     if (f.topic) params.topic = f.topic
     try {
