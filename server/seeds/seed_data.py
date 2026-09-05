@@ -1301,33 +1301,38 @@ async def seed_all():
     else:
         print(f"Companies already seeded ({existing_companies} found), skipping...")
 
-    print("Seeding coding problems (upsert by slug)...")
-    inserted = skipped = 0
+    print(f"Seeding coding problems (upsert by slug)... total in list: {len(CODING_PROBLEMS)}")
+    inserted = skipped = errors = 0
     for prob_data in CODING_PROBLEMS:
-        existing = await CodingProblem.find_one(CodingProblem.slug == prob_data["slug"])
-        if existing:
-            skipped += 1
-            continue
-        prob = CodingProblem(
-            title=prob_data["title"],
-            slug=prob_data["slug"],
-            description=prob_data["description"],
-            difficulty=prob_data["difficulty"],
-            topics=prob_data.get("topics", []),
-            companies=prob_data.get("companies", []),
-            input_format=prob_data.get("input_format"),
-            output_format=prob_data.get("output_format"),
-            constraints=prob_data.get("constraints"),
-            examples=[Example(**e) for e in prob_data.get("examples", [])],
-            test_cases=[TestCase(**tc) for tc in prob_data.get("test_cases", [])],
-            hints=prob_data.get("hints", []),
-            solutions=[Solution(**s) for s in prob_data.get("solutions", [])],
-            xp_reward=prob_data.get("xp_reward", 50),
-            order=prob_data.get("order", 0),
-        )
-        await prob.insert()
-        inserted += 1
-    print(f"✓ Coding problems: {inserted} inserted, {skipped} already existed")
+        try:
+            existing = await CodingProblem.find_one(CodingProblem.slug == prob_data["slug"])
+            if existing:
+                skipped += 1
+                continue
+            prob = CodingProblem(
+                title=prob_data["title"],
+                slug=prob_data["slug"],
+                description=prob_data["description"],
+                difficulty=prob_data["difficulty"],
+                topics=prob_data.get("topics", []),
+                companies=prob_data.get("companies", []),
+                input_format=prob_data.get("input_format"),
+                output_format=prob_data.get("output_format"),
+                constraints=prob_data.get("constraints"),
+                examples=[Example(**e) for e in prob_data.get("examples", [])],
+                test_cases=[TestCase(**tc) for tc in prob_data.get("test_cases", [])],
+                hints=prob_data.get("hints", []),
+                solutions=[Solution(**s) for s in prob_data.get("solutions", [])],
+                xp_reward=prob_data.get("xp_reward", 50),
+                order=prob_data.get("order", 0),
+            )
+            await prob.insert()
+            inserted += 1
+            print(f"  + inserted: {prob_data['slug']}")
+        except Exception as e:
+            errors += 1
+            print(f"  ✗ ERROR inserting {prob_data['slug']}: {e}")
+    print(f"✓ Coding problems: {inserted} inserted, {skipped} skipped, {errors} errors")
 
     existing_questions = await AptitudeQuestion.count()
     if existing_questions == 0:
