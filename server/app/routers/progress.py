@@ -68,7 +68,7 @@ async def get_dashboard(current_user: User = Depends(get_current_user)):
         Interview.user_id == current_user.id, Interview.status == "completed"
     ).sort(-Interview.completed_at).limit(3).to_list()
 
-    weekly_data = _generate_weekly_chart(progress)
+    weekly_data = await _generate_weekly_chart(current_user.id, progress)
 
     return {
         "success": True,
@@ -117,17 +117,32 @@ async def get_dashboard(current_user: User = Depends(get_current_user)):
     }
 
 
-def _generate_weekly_chart(progress: Progress) -> list:
-    from datetime import datetime, timedelta
-    today = datetime.utcnow()
+async def _generate_weekly_chart(user_id, progress: Progress) -> list:
+    from datetime import datetime, timedelta, timezone
+    from app.models.coding import Submission
+
+    today = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+    week_start = today - timedelta(days=6)
+
+    submissions = await Submission.find(
+        Submission.user_id == user_id,
+        Submission.created_at >= week_start,
+        Submission.status == "accepted",
+    ).to_list()
+
+    coding_by_day: dict = {}
+    for sub in submissions:
+        day_key = sub.created_at.strftime("%Y-%m-%d")
+        coding_by_day[day_key] = coding_by_day.get(day_key, 0) + 1
+
     data = []
     for i in range(7):
-        day = today - timedelta(days=6 - i)
+        day = today + timedelta(days=i - 6)
+        day_key = day.strftime("%Y-%m-%d")
         data.append({
             "day": day.strftime("%a"),
-            "date": day.strftime("%Y-%m-%d"),
-            "coding": max(0, progress.coding.problems_solved // 7 + (1 if i % 3 == 0 else 0)),
-            "aptitude": max(0, progress.aptitude.total_attempted // 7 + (2 if i % 2 == 0 else 0)),
-            "hours": round(1.5 + (0.5 if i % 2 == 0 else 0), 1),
+            "date": day_key,
+            "coding": coding_by_day.get(day_key, 0),
+            "aptitude": 0,
         })
     return data

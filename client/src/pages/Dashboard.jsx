@@ -100,19 +100,19 @@ export default function Dashboard() {
             <AreaChart data={weeklyChart}>
               <defs>
                 <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.4} />
+                  <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="ag" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#06b6d4" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <XAxis dataKey="day" tick={{ fill: '#6b7280', fontSize: 12 }} axisLine={false} tickLine={false} />
               <YAxis hide />
-              <Tooltip contentStyle={{ background: '#111827', border: '1px solid #374151', borderRadius: 8, fontSize: 12 }} />
-              <Area type="monotone" dataKey="coding" stroke="#3b82f6" fill="url(#cg)" strokeWidth={2} name="Coding" />
-              <Area type="monotone" dataKey="aptitude" stroke="#8b5cf6" fill="url(#ag)" strokeWidth={2} name="Aptitude" />
+              <Tooltip contentStyle={{ background: '#0d1230', border: '1px solid rgba(139,92,246,0.3)', borderRadius: 8, fontSize: 12 }} />
+              <Area type="monotone" dataKey="coding" stroke="#8b5cf6" fill="url(#cg)" strokeWidth={2} name="Coding" />
+              <Area type="monotone" dataKey="aptitude" stroke="#06b6d4" fill="url(#ag)" strokeWidth={2} name="Aptitude" />
             </AreaChart>
           </ResponsiveContainer>
         </div>

@@ -15,14 +15,28 @@ from app.config.settings import settings
 router = APIRouter(prefix="/api/resumes", tags=["resumes"])
 
 
+def _resume_dict(r: Resume) -> dict:
+    return {
+        "id": str(r.id),
+        "title": r.title,
+        "template": r.template,
+        "is_uploaded": r.is_uploaded,
+        "is_generated": r.is_generated,
+        "created_at": r.created_at.isoformat(),
+        "personal_info": {
+            "name": r.personal_info.name if r.personal_info else None,
+            "email": r.personal_info.email if r.personal_info else None,
+        },
+        "skills": {
+            "technical": (r.skills.technical if r.skills else []),
+        },
+    }
+
+
 @router.get("/")
 async def get_resumes(current_user: User = Depends(get_current_user)):
     resumes = await Resume.find(Resume.user_id == current_user.id).sort(-Resume.created_at).to_list()
-    return {"success": True, "resumes": [
-        {"id": str(r.id), "title": r.title, "template": r.template,
-         "is_uploaded": r.is_uploaded, "is_generated": r.is_generated,
-         "created_at": r.created_at.isoformat()} for r in resumes
-    ]}
+    return {"success": True, "resumes": [_resume_dict(r) for r in resumes]}
 
 
 @router.get("/{resume_id}")
@@ -89,6 +103,26 @@ async def upload_resume(
         analysis.job_match = JobMatch(**analysis_data["job_match"])
     await analysis.insert()
 
+    # Populate personal_info and skills from AI extraction
+    extracted = analysis_data.get("extracted_info", {})
+    if extracted:
+        pi = extracted.get("personal_info", {})
+        if pi:
+            resume.personal_info = PersonalInfo(
+                name=pi.get("name"), email=pi.get("email"),
+                phone=pi.get("phone"), location=pi.get("location"),
+                linkedin=pi.get("linkedin"), github=pi.get("github"),
+            )
+        sk = extracted.get("skills", {})
+        if sk:
+            resume.skills = Skills(
+                technical=sk.get("technical", []),
+                languages=sk.get("languages", []),
+                tools=sk.get("tools", []),
+                frameworks=sk.get("frameworks", []),
+            )
+        await resume.save()
+
     progress = await Progress.find_one(Progress.user_id == current_user.id)
     if progress:
         progress.resume.uploads_count += 1
@@ -97,7 +131,13 @@ async def upload_resume(
         progress.resume.last_analyzed_date = datetime.utcnow()
         await progress.save()
 
-    return {"success": True, "resume_id": str(resume.id), "analysis_id": str(analysis.id), "analysis": analysis_data}
+    return {
+        "success": True,
+        "resume_id": str(resume.id),
+        "analysis_id": str(analysis.id),
+        "analysis": analysis_data,
+        "resume": _resume_dict(resume),
+    }
 
 
 @router.post("/analyze/{resume_id}")

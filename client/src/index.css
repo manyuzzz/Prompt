@@ -4,40 +4,67 @@
 
 @layer base {
   * {
-    @apply border-gray-200;
+    @apply border-gray-800;
   }
   body {
-    @apply bg-gray-950 text-gray-100 font-sans antialiased;
+    background: linear-gradient(135deg, #05071a 0%, #080c22 50%, #05071a 100%);
+    background-attachment: fixed;
+    @apply text-gray-100 font-sans antialiased min-h-screen;
   }
   ::-webkit-scrollbar {
     @apply w-1.5 h-1.5;
   }
   ::-webkit-scrollbar-track {
-    @apply bg-gray-900;
+    background: #080c22;
   }
   ::-webkit-scrollbar-thumb {
-    @apply bg-gray-700 rounded-full;
+    background: rgba(139, 92, 246, 0.3);
+    border-radius: 9999px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-600;
+    background: rgba(139, 92, 246, 0.5);
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium px-4 py-2 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply relative text-white font-semibold px-4 py-2 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden;
+    background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 50%, #5b21b6 100%);
+    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 50%, #6d28d9 100%);
+    box-shadow: 0 4px 25px rgba(124, 58, 237, 0.5);
+    transform: translateY(-1px);
   }
   .btn-secondary {
-    @apply bg-gray-800 hover:bg-gray-700 text-gray-100 font-medium px-4 py-2 rounded-lg border border-gray-700 transition-colors duration-200;
+    @apply bg-white/5 hover:bg-white/10 text-gray-100 font-medium px-4 py-2 rounded-lg border border-white/10 hover:border-white/20 transition-all duration-200;
   }
   .btn-ghost {
-    @apply hover:bg-gray-800 text-gray-400 hover:text-gray-100 font-medium px-4 py-2 rounded-lg transition-colors duration-200;
+    @apply hover:bg-white/5 text-gray-400 hover:text-gray-100 font-medium px-4 py-2 rounded-lg transition-colors duration-200;
   }
   .card {
-    @apply bg-gray-900 border border-gray-800 rounded-xl p-6;
+    @apply rounded-xl p-6 border;
+    background: linear-gradient(135deg, rgba(13, 18, 48, 0.9) 0%, rgba(8, 12, 34, 0.95) 100%);
+    border-color: rgba(139, 92, 246, 0.15);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+  .card:hover {
+    border-color: rgba(139, 92, 246, 0.25);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.05);
   }
   .input {
-    @apply bg-gray-800 border border-gray-700 text-gray-100 placeholder-gray-500 rounded-lg px-4 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200;
+    @apply border text-gray-100 placeholder-gray-600 rounded-lg px-4 py-2.5 w-full focus:outline-none transition-all duration-200;
+    background: rgba(5, 7, 26, 0.8);
+    border-color: rgba(139, 92, 246, 0.2);
+  }
+  .input:focus {
+    border-color: rgba(139, 92, 246, 0.6);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+  }
+  select.input option {
+    background: #0d1230;
+    color: #f3f4f6;
   }
   .label {
     @apply block text-sm font-medium text-gray-400 mb-1.5;
@@ -46,40 +73,77 @@
     @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
   }
   .badge-blue {
-    @apply badge bg-blue-900/50 text-blue-300;
+    @apply badge;
+    background: rgba(99, 102, 241, 0.15);
+    color: #a5b4fc;
+    border: 1px solid rgba(99, 102, 241, 0.25);
   }
   .badge-green {
-    @apply badge bg-green-900/50 text-green-300;
+    @apply badge;
+    background: rgba(16, 185, 129, 0.12);
+    color: #6ee7b7;
+    border: 1px solid rgba(16, 185, 129, 0.2);
   }
   .badge-yellow {
-    @apply badge bg-yellow-900/50 text-yellow-300;
+    @apply badge;
+    background: rgba(245, 158, 11, 0.12);
+    color: #fde68a;
+    border: 1px solid rgba(245, 158, 11, 0.2);
   }
   .badge-red {
-    @apply badge bg-red-900/50 text-red-300;
+    @apply badge;
+    background: rgba(239, 68, 68, 0.12);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.2);
   }
   .badge-purple {
-    @apply badge bg-purple-900/50 text-purple-300;
+    @apply badge;
+    background: rgba(139, 92, 246, 0.15);
+    color: #c4b5fd;
+    border: 1px solid rgba(139, 92, 246, 0.25);
   }
   .stat-card {
     @apply card flex flex-col gap-2;
   }
   .progress-bar {
-    @apply h-2 bg-gray-800 rounded-full overflow-hidden;
+    @apply h-2 rounded-full overflow-hidden;
+    background: rgba(255,255,255,0.07);
   }
   .progress-fill {
-    @apply h-full rounded-full transition-all duration-500;
+    @apply h-full rounded-full transition-all duration-700;
+  }
+  .nav-link-active {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(109, 40, 217, 0.1) 100%);
+    border: 1px solid rgba(139, 92, 246, 0.35);
+    color: #c4b5fd;
   }
 }
 
 @layer utilities {
   .text-gradient {
-    @apply bg-gradient-to-r from-primary-400 to-accent-purple bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-primary-400 via-accent-purple to-accent-cyan bg-clip-text text-transparent;
+  }
+  .text-gradient-gold {
+    @apply bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent;
   }
   .glow {
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 0 30px rgba(139, 92, 246, 0.4);
+  }
+  .glow-sm {
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.25);
   }
   .glass {
-    @apply bg-white/5 backdrop-blur-sm border border-white/10;
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .glass-dark {
+    background: rgba(5, 7, 26, 0.7);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(139, 92, 246, 0.15);
+  }
+  .border-gradient {
+    border-image: linear-gradient(135deg, rgba(139,92,246,0.4), rgba(6,182,212,0.2)) 1;
   }
 }
 
@@ -101,4 +165,13 @@
 /* Code highlight */
 pre code {
   @apply font-mono text-sm;
+}
+
+/* Gradient orb background effect */
+.bg-orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
 }
